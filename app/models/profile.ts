@@ -16,7 +16,7 @@ export default class Profile extends BaseModel {
   @column()
   declare lastName: string
 
-  @column()
+  @column.date()
   declare birthDate: DateTime
 
   @column.dateTime({ autoCreate: true })

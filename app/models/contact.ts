@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Account from '#models/account'
-import { ContactTypes } from '#enums/contact_types'
+import ContactType from '#models/contact_type'
 
 export default class Contact extends BaseModel {
   @column({ isPrimary: true })
@@ -12,7 +12,7 @@ export default class Contact extends BaseModel {
   declare accountId: number
 
   @column()
-  declare type: ContactTypes
+  declare contactTypeId: number
 
   @column()
   declare value: string
@@ -25,4 +25,7 @@ export default class Contact extends BaseModel {
 
   @belongsTo(() => Account)
   declare account: BelongsTo<typeof Account>
+
+  @belongsTo(() => ContactType)
+  declare type: BelongsTo<typeof ContactType>
 }

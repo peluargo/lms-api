@@ -1,4 +1,3 @@
-// database/migrations/1700000000004_create_guardians_table.ts
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
@@ -10,7 +9,7 @@ export default class extends BaseSchema {
 
       // O responsável
       table
-        .integer('guardian_id')
+        .integer('guardian_account_id')
         .unsigned()
         .references('id')
         .inTable('accounts')
@@ -18,11 +17,13 @@ export default class extends BaseSchema {
 
       // O dependente
       table
-        .integer('student_id')
+        .integer('account_id')
         .unsigned()
         .references('id')
         .inTable('accounts')
         .onDelete('CASCADE')
+
+      table.unique(['guardian_account_id', 'account_id'])
 
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()
