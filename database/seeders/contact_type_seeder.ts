@@ -2,6 +2,8 @@ import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import ContactType, { ContactTypes } from '#models/contact_type'
 
 export default class extends BaseSeeder {
+  static environment = ['development', 'test']
+
   async run() {
     const data = Object.entries(ContactTypes)
       .filter(([key, _]) => Number.isNaN(Number(key)))

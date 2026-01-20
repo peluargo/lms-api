@@ -28,6 +28,7 @@ export default class Role extends BaseModel {
     pivotTable: 'accounts_roles',
     pivotForeignKey: 'role_id',
     pivotRelatedForeignKey: 'account_id',
+    pivotTimestamps: true,
   })
   declare accounts: ManyToMany<typeof Account>
 }
