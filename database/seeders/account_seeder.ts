@@ -1,68 +1,33 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import Account from '#models/account'
-import { DateTime } from 'luxon'
-import { ContactTypes } from '#models/contact_type'
-import { Roles } from '#models/role'
+import { ACCOUNTS } from '#constants/accounts'
 
 export default class extends BaseSeeder {
   static environment = ['development']
 
   async run() {
-    const admin = await Account.updateOrCreate(
-      { username: 'system.administrator' },
-      { password: '9a0r2g5E$0TK' }
-    )
-    await admin.related('profile').updateOrCreate(
-      {},
-      {
-        firstName: 'System',
-        lastName: 'Administrator',
-        birthDate: DateTime.fromISO('1999-12-31'),
-      }
-    )
-    await admin
-      .related('contacts')
-      .updateOrCreate(
-        { contactTypeId: ContactTypes.EMAIL },
-        { value: 'system.administrator@localhost.com' }
+    for (const data of Object.values(ACCOUNTS)) {
+      const account = await Account.updateOrCreate(
+        { username: data.username },
+        { password: data.password }
       )
-    await admin.related('roles').sync([Roles.SYSTEM_ADMINISTRATOR])
 
-    const employee = await Account.updateOrCreate(
-      { username: 'employee.raccoon' },
-      { password: '9a0r2g5E$0TK' }
-    )
-    await employee.related('profile').updateOrCreate(
-      {},
-      {
-        firstName: 'Employee',
-        lastName: 'Raccoon',
-        birthDate: DateTime.fromISO('1999-12-31'),
-      }
-    )
-    await employee
-      .related('contacts')
-      .updateOrCreate(
-        { contactTypeId: ContactTypes.EMAIL },
-        { value: 'employee.raccoon@localhost.com' }
+      await account.related('profile').updateOrCreate(
+        {},
+        {
+          firstName: data.profile.firstName,
+          lastName: data.profile.lastName,
+          birthDate: data.profile.birthDate,
+        }
       )
-    await employee.related('roles').sync([Roles.EMPLOYEE])
 
-    const student = await Account.updateOrCreate(
-      { username: 'student.ant' },
-      { password: '9a0r2g5E$0TK' }
-    )
-    await student.related('profile').updateOrCreate(
-      {},
-      {
-        firstName: 'Student',
-        lastName: 'Ant',
-        birthDate: DateTime.fromISO('1999-12-31'),
+      for (const contact of data.contacts) {
+        await account
+          .related('contacts')
+          .updateOrCreate({ contactTypeId: contact.contactTypeId }, { value: contact.value })
       }
-    )
-    await student
-      .related('contacts')
-      .updateOrCreate({ contactTypeId: ContactTypes.EMAIL }, { value: 'student.ant@localhost.com' })
-    await student.related('roles').sync([Roles.STUDENT])
+
+      await account.related('roles').sync(data.roles)
+    }
   }
 }
